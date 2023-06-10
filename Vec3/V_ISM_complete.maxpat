@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 35.0, 84.0, 699.0, 699.0 ],
+		"rect" : [ 82.0, 84.0, 699.0, 699.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,18 @@
 		"subpatcher_template" : "",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 510.0, 322.0, 117.0, 22.0 ],
+					"text" : "/area/6/xyz 8 6 3 1 0"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-22",
 					"maxclass" : "number",

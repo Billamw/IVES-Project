@@ -163,6 +163,7 @@ function createPatcher(num) {
     p.connect(dot_Normal, 0, divide2, 1);
 
     var if1 = p.newdefault(i * triangleInlet + leftSpace, topSpace + 8 * verticalInlet, "if 0 <= $i1 <= 1 & 0 <= $i2 <= 1 & 0 <= $i3 <= 1 then 1 else 0");
+    // if1.setattr("width", 160);
     if1.varname = "if1" + i;
 
     p.connect(divide0, 0, if1, 0);
