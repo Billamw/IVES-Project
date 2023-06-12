@@ -27,10 +27,10 @@ function norm(vec=[]){
 }
 // check if the given polygon is in
 function isInTwoDimSpace(polygon=[]) {
-  let vec1 = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-  let vec2 = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
-  let normal = cross(vec1, vec2);
-  for (let i = 0; i < polygon.length; i++) {
+  var vec1 = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+  var vec2 = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+  var normal = cross(vec1, vec2);
+  for (var i = 0; i < polygon.length; i++) {
     if (dot(normal, polygon[i]) > 0.005) {
       return false;
     }
@@ -42,39 +42,57 @@ function isInTwoDimSpace(polygon=[]) {
 //svec: support vector wall[3]-wall[0]
 //dvec: direction vector wall[1]-wall[0]
 function getImageSoundSource(polygon = [], speaker = []) {
-    let lvec = polygon[0];
-    // let svec = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-    // let dvec = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
-    let svec = subtract(polygon[0], polygon[1]);
-    let dvec = subtract(polygon[0], polygon[2]);
-    let normal = cross(dvec, svec);
+    var lvec = polygon[0];
+    // var svec = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+    // var dvec = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+    var svec = subtract(polygon[0], polygon[1]);
+    var dvec = subtract(polygon[0], polygon[2]);
+    var normal = cross(dvec, svec);
     normal = divide(normal, norm(normal));
-    let levToSpeaker = subtract(lvec, speaker);
+    var levToSpeaker = subtract(lvec, speaker);
     // calculating intersectionpoint of plane and speaker
-    let lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
+    var lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
     return add(speaker, multiply(2*lambda, normal));
+}
+function getImageSoundSources(polygon = [], speakers = []) {
+    var lvec = polygon[0];
+    // var svec = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+    // var dvec = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+    var svec = subtract(polygon[0], polygon[1]);
+    var dvec = subtract(polygon[0], polygon[2]);
+    var normal = cross(dvec, svec);
+    normal = divide(normal, norm(normal));
+    var ISSes = []
+    for (var i = 0; i < speakers.length; i++) {
+      var speaker = speakers[i];
+      var levToSpeaker = subtract(lvec, speaker);
+      // calculating intersectionpoint of plane and speaker
+      var lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
+      ISSes.push(add(speaker, multiply(2*lambda, normal)));
+    }
+    return ISSes;
 }
 
 function calculateIntersection(polygon=[], microphone=[], ISS=[]) {
 
-    let lineVector = subtract(microphone, ISS);
+    var lineVector = subtract(microphone, ISS);
 
-    let planeNormal = cross(
+    var planeNormal = cross(
       subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
       subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
     );
   
-    let t = dot(planeNormal, subtract(polygon[0], ISS)) / dot(planeNormal, lineVector);
-    let intersectionPoint = add(ISS, multiply(t, lineVector));
+    var t = dot(planeNormal, subtract(polygon[0], ISS)) / dot(planeNormal, lineVector);
+    var intersectionPoint = add(ISS, multiply(t, lineVector));
   
     return intersectionPoint;
   }
 
   
   function containsPoint(point=[], polygon=[]) {
-    let toReturn = false;
-  for (let i = 0; i < polygon.length-1; i++) {
-    let triangle = [polygon[0], polygon[i], polygon[i+1]];
+    var toReturn = false;
+  for (var i = 0; i < polygon.length-1; i++) {
+    var triangle = [polygon[0], polygon[i], polygon[i+1]];
     const normal = cross(subtract(triangle[1], triangle[0]), subtract(triangle[2], triangle[0]));
 
     // calculate the barycentric coordinates of the point in the constructed triangle.
@@ -94,6 +112,12 @@ function getDistance(ISS = [], microfon = []) {
 }
 
 
+
+
+
+
+
+// Example
 const polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
 const speaker = [5,2,4];
@@ -109,17 +133,3 @@ if(isInTwoDimSpace(polygon)) {
 } else {
   console.log("Not in two dim space!")
 }
-
-
-
-// Beispielanwendung
-  // var polygon3D = [[0, 0, 0], [0, 5, 0], [5, 5, 0], [5, 0, 0]];
-  // var point3D = [0, 0, 0];
-  // // var isInside3D = pointInPolygon3D(point3D, polygon3D);
-  // // var isInPolygon1 = isInPolygon(point3D, polygon3D);
-  // var isInPolygon = containsPoint(point3D, polygon3D);
-  // var isTwoDim = isInTwoDimSpace(polygon3D);
-  // // console.log(isInPolygon1)
-  // console.log("is inside: " + isInPolygon); // true
-  // console.log("is two dim: " + isTwoDim);
-        
