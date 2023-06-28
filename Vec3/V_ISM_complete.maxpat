@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 35.0, 84.0, 1068.0, 713.0 ],
+		"rect" : [ 41.0, 84.0, 1068.0, 699.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,6 +40,42 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-33",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 488.5, 439.0, 88.0, 22.0 ],
+					"text" : "/source/1 7 8 5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-28",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 471.0, 499.0, 123.0, 22.0 ],
+					"text" : "prepend setSpeakers"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 507.0, 396.0, 116.0, 22.0 ],
+					"text" : "spat5.osc.routepass"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-23",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -68,13 +104,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 442.5, 583.0, 87.0, 22.0 ],
+					"patching_rect" : [ 442.5, 583.0, 111.0, 22.0 ],
 					"saved_object_attributes" : 					{
-						"filename" : "ISM_MAX.js",
+						"filename" : "ISM_MAXcopy.js",
 						"parameter_enable" : 0
 					}
 ,
-					"text" : "js ISM_MAX.js"
+					"text" : "js ISM_MAXcopy.js"
 				}
 
 			}
@@ -99,18 +135,6 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 566.0, 528.0, 117.0, 22.0 ],
 					"text" : "/area/8/xyz 8 6 3 1 0"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-48",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 496.0, 407.0, 57.0, 22.0 ],
-					"text" : "tosymbol"
 				}
 
 			}
@@ -146,18 +170,6 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 107.0, 421.0, 117.0, 22.0 ],
 					"text" : "/area/8/xyz 8 6 3 1 0"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-33",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 689.0, 184.0, 60.0, 22.0 ],
-					"text" : "zl replace"
 				}
 
 			}
@@ -207,18 +219,6 @@
 					"outlettype" : [ "", "float", "float", "float", "float", "float" ],
 					"patching_rect" : [ 709.0, 296.0, 90.0, 22.0 ],
 					"text" : "unpack s f f f f f"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-29",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 496.0, 457.0, 158.0, 22.0 ],
-					"text" : "prepend packFromMessage"
 				}
 
 			}
@@ -369,29 +369,12 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 319.0, 407.0, 153.0, 22.0 ],
-					"saved_object_attributes" : 					{
-						"filename" : "getCornersOfMessage.js",
-						"parameter_enable" : 0
-					}
-,
-					"text" : "js getCornersOfMessage.js"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-8",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 482.0, 362.0, 117.0, 22.0 ],
+					"patching_rect" : [ 709.0, 258.0, 117.0, 22.0 ],
 					"text" : "/area/8/xyz 8 6 3 1 0"
 				}
 
@@ -577,8 +560,8 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-29", 0 ]
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-28", 0 ]
 				}
 
 			}
@@ -593,6 +576,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-32", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-28", 0 ],
+					"source" : [ "obj-33", 0 ]
 				}
 
 			}
@@ -628,13 +618,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-47", 0 ],
 					"source" : [ "obj-46", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-29", 0 ],
-					"source" : [ "obj-48", 0 ]
 				}
 
 			}
@@ -678,15 +661,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-44", 0 ],
-					"order" : 0,
-					"source" : [ "obj-8", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-48", 0 ],
-					"order" : 1,
 					"source" : [ "obj-8", 0 ]
 				}
 
@@ -700,7 +674,7 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "ISM_MAX.js",
+				"name" : "ISM_MAXcopy.js",
 				"bootpath" : "D:/Stuff/GitHub/IVES-Project/Vec3",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
@@ -708,6 +682,10 @@
 			}
 , 			{
 				"name" : "spat5.osc.append.mxe64",
+				"type" : "mx64"
+			}
+, 			{
+				"name" : "spat5.osc.routepass.mxe64",
 				"type" : "mx64"
 			}
 , 			{
