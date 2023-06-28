@@ -4,31 +4,31 @@ outlets = 2;
 
 // simple vector operations
 const math = {
-  add(vec1 = [], vec2 = []) {
+  add: function(vec1 = [], vec2 = []) {
     return [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
   },
-  subtract(vec1 = [], vec2 = []) {
+  subtract: function(vec1 = [], vec2 = []) {
     return [vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]];
   },
-  cross(vec1 = [], vec2 = []) {
+  cross: function(vec1 = [], vec2 = []) {
     return [
       vec1[1] * vec2[2] - vec1[2] * vec2[1],
       vec1[2] * vec2[0] - vec1[0] * vec2[2],
       vec1[0] * vec2[1] - vec1[1] * vec2[0]
     ];
   },
-  dot(vec1 = [], vec2 = []) {
+  dot: function(vec1 = [], vec2 = []) {
     return (
       vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]
     );
   },
-  multiply(value, vec = []) {
+  multiply: function(value, vec = []) {
     return [vec[0] * value, vec[1] * value, vec[2] * value];
   },
-  divide(value, vec = []) {
+  divide: function(value, vec = []) {
     return [vec[0] / value, vec[1] / value, vec[2] / value];
   },
-  norm(vec = []) {
+  norm: function(vec = []) {
     return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
   }
 };
@@ -60,7 +60,7 @@ function setWalls(message="") {
     spltMsg[i] = parseFloat(spltMsg[i]);
     
   }
-
+  // outlet(0, "bang")
   walls[areaNum] = spltMsg;
 
 }
