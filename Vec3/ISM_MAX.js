@@ -1,30 +1,34 @@
 autowatch = 1;
 
-
-function add(vec1=[], vec2=[]) {
-  return [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
-}
-function subtract(vec1=[], vec2=[]) {
-  return [vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]];
-}
-function cross(vec1=[], vec2=[]) {
-  return [vec1[1] * vec2[2] - vec1[2] * vec2[1],
-          vec1[2] * vec2[0] - vec1[0] * vec2[2],
-          vec1[0] * vec2[1] - vec1[1] * vec2[0]];
-}
-function dot(vec1=[], vec2=[]) {
-  return vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2];
-}
-function multiply(value, vec=[]) {
-  return [vec[0] * value, vec[1] * value, vec[2] * value];
-}
-function divide(value, vec=[]) {
-  return [vec[0] / value, vec[1] / value, vec[2] / value];
-  
-}
-function norm(vec=[]){
-  return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
-}
+const math = {
+  add(vec1 = [], vec2 = []) {
+    return [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
+  },
+  subtract(vec1 = [], vec2 = []) {
+    return [vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]];
+  },
+  cross(vec1 = [], vec2 = []) {
+    return [
+      vec1[1] * vec2[2] - vec1[2] * vec2[1],
+      vec1[2] * vec2[0] - vec1[0] * vec2[2],
+      vec1[0] * vec2[1] - vec1[1] * vec2[0]
+    ];
+  },
+  dot(vec1 = [], vec2 = []) {
+    return (
+      vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]
+    );
+  },
+  multiply(value, vec = []) {
+    return [vec[0] * value, vec[1] * value, vec[2] * value];
+  },
+  divide(value, vec = []) {
+    return [vec[0] / value, vec[1] / value, vec[2] / value];
+  },
+  norm(vec = []) {
+    return Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+  }
+};
 
 var microphone = [];
 var speakers   = [];
@@ -46,12 +50,20 @@ function packFromMessage(message) {
   // outlet(0, args[0])
 }
 
-function getMicrophone(message="") {
+function setMicrophone(message="") {
   var spltMsg = message.split(" ");
-  // splittedMessage.reverse();
-  // splittedMessage.pop();
-  // splittedMessage.reverse();
   microphone = [spltMsg[1], spltMsg[2], spltMsg[3]];
+}
+
+function setSpeaker(message="") {
+  var spltMsg = message.split(" ");
+  for (let i = 1; i < parseInt(spltMsg.length/3); i+=3) {
+    speakers.push([spltMsg[i],spltMsg[i+1],spltMsg[i+2]])
+  }
+}
+
+function setWalls(message="") {
+  var spltMsg = message.split(" ");
 }
 
 
@@ -59,11 +71,11 @@ function getMicrophone(message="") {
 
 // check if the given polygon is in
 function isInTwoDimSpace(polygon=[]) {
-  var vec1 = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-  var vec2 = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
-  var normal = cross(vec1, vec2);
+  var vec1 = math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+  var vec2 = math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+  var normal = math.cross(vec1, vec2);
   for (var i = 0; i < polygon.length; i++) {
-    if (dot(normal, polygon[i]) > 0.005) {
+    if (math.dot(normal, polygon[i]) > 0.005) {
       return false;
     }
   }
@@ -75,49 +87,72 @@ function isInTwoDimSpace(polygon=[]) {
 //dvec: direction vector wall[1]-wall[0]
 function getImageSoundSource(polygon = [], speaker = []) {
     var lvec = polygon[0];
-    // var svec = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-    // var dvec = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
-    var svec = subtract(polygon[0], polygon[1]);
-    var dvec = subtract(polygon[0], polygon[2]);
-    var normal = cross(dvec, svec);
-    normal = divide(normal, norm(normal));
-    var levToSpeaker = subtract(lvec, speaker);
+    // var svec = math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+    // var dvec = math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+    var svec = math.subtract(polygon[0], polygon[1]);
+    var dvec = math.subtract(polygon[0], polygon[2]);
+    var normal = math.cross(dvec, svec);
+    normal = math.divide(math.norm(normal), normal);
+    var levToSpeaker = math.subtract(lvec, speaker);
     // calculating intersectionpoint of plane and speaker
-    var lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
-    return add(speaker, multiply(2*lambda, normal));
+    var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
+    return math.add(speaker, math.multiply(2*lambda, normal));
 }
+
 function getImageSoundSources(polygon = [], speakers = []) {
     var lvec = polygon[0];
-    // var svec = subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-    // var dvec = subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
-    var svec = subtract(polygon[0], polygon[1]);
-    var dvec = subtract(polygon[0], polygon[2]);
-    var normal = cross(dvec, svec);
-    normal = divide(normal, norm(normal));
+    // var svec = math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
+    // var dvec = math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
+    var svec = math.subtract(polygon[0], polygon[1]);
+    var dvec = math.subtract(polygon[0], polygon[2]);
+    var normal = math.cross(dvec, svec);
+    normal = math.divide(math.norm(normal), normal);
     var ISSes = []
-    for (var i = 0; i < speakers.length; i++) {
-      var speaker = speakers[i];
-      var levToSpeaker = subtract(lvec, speaker);
+    for (const speaker of speakers) {
+      var levToSpeaker = math.subtract(lvec, speaker);
       // calculating intersectionpoint of plane and speaker
-      var lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
-      ISSes.push(add(speaker, multiply(2*lambda, normal)));
+      var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
+      ISSes.push(math.add(speaker, math.multiply(2*lambda, normal)));
     }
+    // for (var i = 0; i < speakers.length; i++) {
+    //   var speaker = speakers[i];
+    //   var levToSpeaker = math.subtract(lvec, speaker);
+    //   // calculating intersectionpoint of plane and speaker
+    //   var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
+    //   ISSes.push(math.add(speaker, math.multiply(2*lambda, normal)));
+    // }
     return ISSes;
 }
 
 function calculateIntersection(polygon=[], microphone=[], ISS=[]) {
 
-    var lineVector = subtract(microphone, ISS);
+    var lineVector = math.subtract(microphone, ISS);
 
-    var planeNormal = cross(
-      subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
-      subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
+    var planeNormal = math.cross(
+      math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
+      math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
     );
   
-    var t = dot(planeNormal, subtract(polygon[0], ISS)) / dot(planeNormal, lineVector);
-    var intersectionPoint = add(ISS, multiply(t, lineVector));
+    var t = math.dot(planeNormal, math.subtract(polygon[0], ISS)) / math.dot(planeNormal, lineVector);
+    var intersectionPoint = math.add(ISS, math.multiply(t, lineVector));
   
     return intersectionPoint;
+  }
+
+function calculateIntersections(polygon=[], microphone=[], ISSes=[]) {
+  var intersectionPoints = []
+  for (const ISS of ISSes) {
+    var lineVector = math.subtract(microphone, ISS);
+
+    var planeNormal = math.cross(
+      math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
+      math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
+    );
+  
+    var t = math.dot(planeNormal, math.subtract(polygon[0], ISS)) / math.dot(planeNormal, lineVector);
+    intersectionPoints.push( math.add( ISS, math.multiply( t, lineVector ) ) );
+  }
+    return intersectionPoints;
   }
 
   
@@ -125,13 +160,13 @@ function calculateIntersection(polygon=[], microphone=[], ISS=[]) {
     var toReturn = false;
   for (var i = 0; i < polygon.length-1; i++) {
     var triangle = [polygon[0], polygon[i], polygon[i+1]];
-    const normal = cross(subtract(triangle[1], triangle[0]), subtract(triangle[2], triangle[0]));
+    const normal = math.cross(math.subtract(triangle[1], triangle[0]), math.subtract(triangle[2], triangle[0]));
 
     // calculate the barycentric coordinates of the point in the constructed triangle.
     const bc1 = [
-      dot(cross(subtract(triangle[1], point), subtract(triangle[2], point)), normal) / dot(normal, normal),
-      dot(cross(subtract(triangle[2], point), subtract(triangle[0], point)), normal) / dot(normal, normal),
-      dot(cross(subtract(triangle[0], point), subtract(triangle[1], point)), normal) / dot(normal, normal),
+      math.dot(math.cross(math.subtract(triangle[1], point), math.subtract(triangle[2], point)), normal) / math.dot(normal, normal),
+      math.dot(math.cross(math.subtract(triangle[2], point), math.subtract(triangle[0], point)), normal) / math.dot(normal, normal),
+      math.dot(math.cross(math.subtract(triangle[0], point), math.subtract(triangle[1], point)), normal) / math.dot(normal, normal),
     ];
     // check if the point is in any of the constructed triangles
     toReturn = toReturn || bc1.every(coord => coord >= 0 && coord <= 1);
@@ -140,7 +175,7 @@ function calculateIntersection(polygon=[], microphone=[], ISS=[]) {
 }
 
 function getDistance(ISS = [], microfon = []) {
-   return norm(subtract(ISS, microfon));
+   return math.norm(math.subtract(ISS, microfon));
 }
 
 
@@ -152,16 +187,24 @@ function getDistance(ISS = [], microfon = []) {
 // Example
 const polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
-const speaker = [5,2,4];
+var   speaker0 = [5,2,4];
+var   speaker1 = [4,2,5];
+const speakersTest = [speaker0, speaker1];
 const microfon = [5,6,4];
 
 if(isInTwoDimSpace(polygon)) {
 
-  const iss = getImageSoundSource(polygon, speaker);
-  console.log("iss: " + iss)
-  const intersection = calculateIntersection(polygon, microfon, iss);
-  const contains = containsPoint(intersection, polygon);
-  console.log("is valid: " + contains)
+  const isses = getImageSoundSources(polygon, speakersTest);
+  console.log("iss: " + isses)
+  const intersections = calculateIntersections(polygon, microfon, isses);
+  for (const intersection of intersections) {
+    const contains = containsPoint(intersection, polygon);
+    console.log("is valid: " + contains)
+  }
 } else {
   console.log("Not in two dim space!")
 }
+
+var a = []
+a[6] = 0;
+

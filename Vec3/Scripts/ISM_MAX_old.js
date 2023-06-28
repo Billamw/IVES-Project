@@ -1,4 +1,35 @@
-const math = require('mathjs');
+// const math = require('mathjs');
+const math = {
+  add(vec1 = [], vec2 = []) {
+    return [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
+  },
+  subtract(vec1 = [], vec2 = []) {
+    return [vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]];
+  },
+  cross(vec1 = [], vec2 = []) {
+    return [
+      vec1[1] * vec2[2] - vec1[2] * vec2[1],
+      vec1[2] * vec2[0] - vec1[0] * vec2[2],
+      vec1[0] * vec2[1] - vec1[1] * vec2[0]
+    ];
+  },
+  dot(vec1 = [], vec2 = []) {
+    return (
+      vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]
+    );
+  },
+  multiply(value, vec = []) {
+    return [vec[0] * value, vec[1] * value, vec[2] * value];
+  },
+  divide(value, vec = []) {
+    return [vec[0] / value, vec[1] / value, vec[2] / value];
+  },
+  norm(vec = []) {
+    return Math.sqrt(
+      vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]
+    );
+  }
+};
 
 
 // check if the given polygon is in
@@ -72,8 +103,8 @@ function getDistance(ISS = [], microfon = []) {
 
 const polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
-const speaker = [5,2,4];
-const microfon = [5,6,4];
+const speaker = [5,5,5];
+const microfon = [5,5,5];
 
 if(isInTwoDimSpace(polygon)) {
   const iss = getImageSoundSource(polygon, speaker);
