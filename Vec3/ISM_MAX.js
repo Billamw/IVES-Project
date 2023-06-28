@@ -1,5 +1,8 @@
 autowatch = 1;
+// num of max object outlets
+outlets = 2;
 
+// simple vector operations
 const math = {
   add(vec1 = [], vec2 = []) {
     return [vec1[0] + vec2[0], vec1[1] + vec2[1], vec1[2] + vec2[2]];
@@ -34,37 +37,39 @@ var microphone = [];
 var speakers   = [];
 var walls      = [];
 
-function packFromMessage(message) {
-  // post(message)
-  var split = message.split(" ");
-  // post(split[0])
-  // post(split[2])
-  split.reverse();
-  split.pop();
-  split.reverse();
-  for(var i=0; i<split.length; i++) {
-
-      post(split[i])
-  }
-  
-  // outlet(0, args[0])
-}
 
 function setMicrophone(message="") {
   var spltMsg = message.split(" ");
-  microphone = [spltMsg[1], spltMsg[2], spltMsg[3]];
+  microphone = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 }
 
-function setSpeaker(message="") {
+function setSpeakers(message="") {
   var spltMsg = message.split(" ");
-  for (let i = 1; i < parseInt(spltMsg.length/3); i+=3) {
-    speakers.push([spltMsg[i],spltMsg[i+1],spltMsg[i+2]])
+  for (let i = 1; i < spltMsg.length; i+=3) {
+    speakers.push([parseFloat(spltMsg[i]), parseFloat(spltMsg[i+1]), parseFloat(spltMsg[i+2])])
   }
 }
 
 function setWalls(message="") {
   var spltMsg = message.split(" ");
+  spltMsg.reverse();
+  var areaNum = spltMsg.pop().split("/")[2];
+  spltMsg.reverse();
+
+  for (let i = 0; i < spltMsg.length; i++) {
+    spltMsg[i] = parseFloat(spltMsg[i]);
+    
+  }
+
+  walls[areaNum] = spltMsg;
+
 }
+
+// testing set funktions
+setSpeakers("dfdsjs 5 5 5 4 4 4 6 6 6")
+setWalls("sd/sdsd/6 5 4 3 2 1");
+console.log(speakers)
+console.log(walls)
 
 
 
@@ -87,8 +92,6 @@ function isInTwoDimSpace(polygon=[]) {
 //dvec: direction vector wall[1]-wall[0]
 function getImageSoundSource(polygon = [], speaker = []) {
     var lvec = polygon[0];
-    // var svec = math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-    // var dvec = math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
     var svec = math.subtract(polygon[0], polygon[1]);
     var dvec = math.subtract(polygon[0], polygon[2]);
     var normal = math.cross(dvec, svec);
@@ -101,8 +104,6 @@ function getImageSoundSource(polygon = [], speaker = []) {
 
 function getImageSoundSources(polygon = [], speakers = []) {
     var lvec = polygon[0];
-    // var svec = math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]);
-    // var dvec = math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)]);
     var svec = math.subtract(polygon[0], polygon[1]);
     var dvec = math.subtract(polygon[0], polygon[2]);
     var normal = math.cross(dvec, svec);
@@ -114,13 +115,6 @@ function getImageSoundSources(polygon = [], speakers = []) {
       var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
       ISSes.push(math.add(speaker, math.multiply(2*lambda, normal)));
     }
-    // for (var i = 0; i < speakers.length; i++) {
-    //   var speaker = speakers[i];
-    //   var levToSpeaker = math.subtract(lvec, speaker);
-    //   // calculating intersectionpoint of plane and speaker
-    //   var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
-    //   ISSes.push(math.add(speaker, math.multiply(2*lambda, normal)));
-    // }
     return ISSes;
 }
 
@@ -204,7 +198,4 @@ if(isInTwoDimSpace(polygon)) {
 } else {
   console.log("Not in two dim space!")
 }
-
-var a = []
-a[6] = 0;
 
