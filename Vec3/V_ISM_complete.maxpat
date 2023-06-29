@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 35.0, 84.0, 1468.0, 713.0 ],
+		"rect" : [ 41.0, 84.0, 1068.0, 713.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,18 @@
 		"subpatcher_template" : "",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-30",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 294.0, 472.0, 165.0, 22.0 ],
+					"text" : "setWalls /area/8/xyz 8 6 3 1 0"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-33",
 					"maxclass" : "message",
@@ -102,15 +114,15 @@
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 442.5, 583.0, 111.0, 22.0 ],
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 442.5, 583.0, 104.0, 22.0 ],
 					"saved_object_attributes" : 					{
-						"filename" : "ISM_MAXcopy.js",
+						"filename" : "ISMMAXcopy.js",
 						"parameter_enable" : 0
 					}
 ,
-					"text" : "js ISM_MAXcopy.js"
+					"text" : "js ISMMAXcopy.js"
 				}
 
 			}
@@ -574,6 +586,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-30", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-32", 0 ]
 				}
@@ -674,6 +693,13 @@
 			}
  ],
 		"dependency_cache" : [ 			{
+				"name" : "ISMMAXcopy.js",
+				"bootpath" : "D:/Stuff/GitHub/IVES-Project/Vec3",
+				"patcherrelativepath" : ".",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "spat5.osc.append.mxe64",
 				"type" : "mx64"
 			}
