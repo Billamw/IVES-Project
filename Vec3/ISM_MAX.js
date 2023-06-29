@@ -45,7 +45,7 @@ function setMicrophone(message="") {
 
 function setSpeakers(message="") {
   var spltMsg = message.split(" ");
-  for (let i = 1; i < spltMsg.length; i+=3) {
+  for (var i = 1; i < spltMsg.length; i+=3) {
     speakers.push([parseFloat(spltMsg[i]), parseFloat(spltMsg[i+1]), parseFloat(spltMsg[i+2])])
   }
 }
@@ -56,7 +56,7 @@ function setWalls(message="") {
   var areaNum = spltMsg.pop().split("/")[2];
   spltMsg.reverse();
 
-  for (let i = 0; i < spltMsg.length; i++) {
+  for (var i = 0; i < spltMsg.length; i++) {
     spltMsg[i] = parseFloat(spltMsg[i]);
     
   }

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 41.0, 84.0, 1068.0, 699.0 ],
+		"rect" : [ 35.0, 84.0, 1468.0, 713.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -674,13 +674,6 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "ISM_MAXcopy.js",
-				"bootpath" : "D:/Stuff/GitHub/IVES-Project/Vec3",
-				"patcherrelativepath" : ".",
-				"type" : "TEXT",
-				"implicit" : 1
-			}
-, 			{
 				"name" : "spat5.osc.append.mxe64",
 				"type" : "mx64"
 			}

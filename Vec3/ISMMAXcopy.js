@@ -40,18 +40,18 @@ var speakers   = [];
 var walls      = [];
 
 
-function setMicrophone(message="") {
+function setMicrophone(message) {
   var spltMsg = message.split(" ");
   microphone = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 }
 
-function setSpeakers(message="") {
+function setSpeakers(message) {
   var spltMsg = message.split(" ");
   spltMsg.reverse();
   var areaNum = spltMsg.pop().split("/")[2] - 1;
   spltMsg.reverse();
 
-  for (let i = 0; i < spltMsg.length; i++) {
+  for (var i = 0; i < spltMsg.length; i++) {
     spltMsg[i] = parseFloat(spltMsg[i]);
     
   }
@@ -65,7 +65,7 @@ function setWalls(message) {
   var areaNum = spltMsg.pop().split("/")[2] - 1;
   spltMsg.reverse();
 
-  for (let i = 0; i < spltMsg.length; i++) {
+  for (var i = 0; i < spltMsg.length; i++) {
     spltMsg[i] = parseFloat(spltMsg[i]);
     
   }
@@ -118,7 +118,7 @@ function getImageSoundSources(polygon = [], speakers = []) {
     var normal = cross(dvec, svec);
     normal = divide(norm(normal), normal);
     var ISSes = []
-    for (const speaker of speakers) {
+    for (var speaker of speakers) {
       var levToSpeaker = subtract(lvec, speaker);
       // calculating intersectionpoint of plane and speaker
       var lambda = dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
@@ -144,7 +144,7 @@ function calculateIntersection(polygon=[], microphone=[], ISS=[]) {
 
 function calculateIntersections(polygon=[], microphone=[], ISSes=[]) {
   var intersectionPoints = []
-  for (const ISS of ISSes) {
+  for (var ISS of ISSes) {
     var lineVector = subtract(microphone, ISS);
 
     var planeNormal = cross(
@@ -163,10 +163,10 @@ function calculateIntersections(polygon=[], microphone=[], ISSes=[]) {
     var toReturn = false;
   for (var i = 0; i < polygon.length-1; i++) {
     var triangle = [polygon[0], polygon[i], polygon[i+1]];
-    const normal = cross(subtract(triangle[1], triangle[0]), subtract(triangle[2], triangle[0]));
+    var normal = cross(subtract(triangle[1], triangle[0]), subtract(triangle[2], triangle[0]));
 
     // calculate the barycentric coordinates of the point in the constructed triangle.
-    const bc1 = [
+    var bc1 = [
       dot(cross(subtract(triangle[1], point), subtract(triangle[2], point)), normal) / dot(normal, normal),
       dot(cross(subtract(triangle[2], point), subtract(triangle[0], point)), normal) / dot(normal, normal),
       dot(cross(subtract(triangle[0], point), subtract(triangle[1], point)), normal) / dot(normal, normal),
@@ -188,20 +188,20 @@ function getDistance(ISS = [], microfon = []) {
 
 
 // Example
-const polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
+var polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
 var   speaker0 = [5,2,4];
 var   speaker1 = [4,2,5];
-const speakersTest = [speaker0, speaker1];
-const microfon = [5,6,4];
+var speakersTest = [speaker0, speaker1];
+var microfon = [5,6,4];
 
 if(isInTwoDimSpace(polygon)) {
 
-  const isses = getImageSoundSources(polygon, speakersTest);
+  var isses = getImageSoundSources(polygon, speakersTest);
   console.log("iss: " + isses)
-  const intersections = calculateIntersections(polygon, microfon, isses);
-  for (const intersection of intersections) {
-    const contains = containsPoint(intersection, polygon);
+  var intersections = calculateIntersections(polygon, microfon, isses);
+  for (var intersection of intersections) {
+    var contains = containsPoint(intersection, polygon);
     console.log("is valid: " + contains)
   }
 } else {
