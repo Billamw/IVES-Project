@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 1571.0, 84.0, 1068.0, 705.0 ],
+		"rect" : [ 1570.0, 84.0, 1075.0, 713.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,13 +40,25 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-48",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 611.0, 584.0, 64.0, 22.0 ],
+					"text" : "onChange"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-43",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 594.0, 532.0, 54.0, 22.0 ],
-					"text" : "getWalls"
+					"patching_rect" : [ 594.0, 532.0, 57.0, 22.0 ],
+					"text" : "getAreas"
 				}
 
 			}
@@ -166,8 +178,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 562.0, 439.0, 101.0, 22.0 ],
-					"text" : "prepend setWalls"
+					"patching_rect" : [ 562.0, 439.0, 103.0, 22.0 ],
+					"text" : "prepend setAreas"
 				}
 
 			}
@@ -741,6 +753,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-47", 0 ],
 					"source" : [ "obj-46", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-48", 0 ]
 				}
 
 			}

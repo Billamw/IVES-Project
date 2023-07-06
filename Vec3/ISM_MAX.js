@@ -43,7 +43,7 @@ function setListener(message) {
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[2] == "xyz") {
     listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
-    onChange();
+    // onChange();
   }
 }
 
@@ -52,7 +52,7 @@ function setSources(message) {
   var sourceIdx = spltMsg[0].split("/")[2] - 1;
   sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
-  onChange();
+  // onChange();
 }
 
 function setAreas(message) {
@@ -62,9 +62,9 @@ function setAreas(message) {
     spltMsg[i] = parseFloat(spltMsg[i]);
   }
   var areaIdx = spltMsg[0].split("/")[2] - 1;
-  areas[areaIdx] = [ [spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]], ];
+  areas[areaIdx] = [[spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]]];
 
-  onChange();
+  // onChange();
   
 }
 
@@ -81,7 +81,7 @@ function getSources() {
 
 
 
-// check if the given polygon is in
+// check if the given area is in
 function isInTwoDimSpace(area) {
   // var vec1 = math.subtract(area[0], area[parseInt((area.length-1) / 2)]);
   // var vec2 = math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)]);
@@ -105,7 +105,7 @@ function getImageSoundSource(area, source) {
     var dvec = math.subtract(area[0], area[2]);
     var normal = math.cross(dvec, svec);
     normal = math.divide(math.norm(normal), normal);
-    var levTosource = math.subtract(lvec, source);
+    var levTosource = math.subtract(source, lvec);
     // calculating intersectionpoint of plane and source
     var lambda = math.dot(normal, levTosource) / (normal[0] + normal[1] + normal[2]);
     return math.add(source, math.multiply(2*lambda, normal));
@@ -129,42 +129,42 @@ function getImageSoundSources(area, sources) {
     return ISSes;
 }
 
-function calculateIntersection(polygon, listener, ISS) {
+function calculateIntersection(area, listener, ISS) {
 
     var lineVector = math.subtract(listener, ISS);
 
     var planeNormal = math.cross(
-      math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
-      math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
+      math.subtract(area[0], area[parseInt((area.length-1) / 2)]),
+      math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)])
     );
   
-    var t = math.dot(planeNormal, math.subtract(polygon[0], ISS)) / math.dot(planeNormal, lineVector);
+    var t = math.dot(planeNormal, math.subtract(area[0], ISS)) / math.dot(planeNormal, lineVector);
     var intersectionPoint = math.add(ISS, math.multiply(t, lineVector));
   
     return intersectionPoint;
   }
 
-function calculateIntersections(polygon, listener, ISSes) {
+function calculateIntersections(area, listener, ISSes) {
   var intersectionPoints = []
-  for (var ISS in ISSes) {
+  for (var i = 0; i < ISSes-length; i++) {
     var lineVector = math.subtract(listener, ISS);
 
     var planeNormal = math.cross(
-      math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
-      math.subtract(polygon[0], polygon[polygon.length - parseInt((polygon.length-1) / 2)])
+      math.subtract(area[0], area[parseInt((area.length-1) / 2)]),
+      math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)])
     );
   
-    var t = math.dot(planeNormal, math.subtract(polygon[0], ISS)) / math.dot(planeNormal, lineVector);
+    var t = math.dot(planeNormal, math.subtract(area[0], ISS)) / math.dot(planeNormal, lineVector);
     intersectionPoints.push( math.add( ISS, math.multiply( t, lineVector ) ) );
   }
     return intersectionPoints;
   }
 
   
-function containsPoint(point, polygon) {
+function containsPoint(point, area) {
   var toReturn = false;
-  for (var i = 0; i < polygon.length-1; i++) {
-    var triangle = [polygon[0], polygon[i], polygon[i+1]];
+  for (var i = 0; i < area.length-1; i++) {
+    var triangle = [area[0], area[i], area[i+1]];
     var normal = math.cross(math.subtract(triangle[1], triangle[0]), math.subtract(triangle[2], triangle[0]));
 
     // calculate the barycentric coordinates of the point in the constructed triangle.
@@ -213,13 +213,11 @@ function onChange() {
     }
     var ISSes = getImageSoundSources(area, sources);
     var intersections = calculateIntersections(area, listener, ISSes);
-    for (var i = 0; i < intersections.length; i++) {
-      post("OnChance() for loop intersection " + i);
-      post();
-      const intersection = intersections[i];
+    for (var j = 0; j < intersections.length; j++) {
+      const intersection = intersections[j];
       if(containsPoint(intersection, area)) {
         outlet(0, "/source/" + (10) + "/color red");
-        outlet(0, "/source/" + (10) + "/xyz " + ISSes[i][0] + " " + ISSes[i][1] + " " + ISSes[i][2]);
+        outlet(0, "/source/" + (10) + "/xyz " + ISSes[j][0] + " " + ISSes[j][1] + " " + ISSes[j][2]);
       }
     }
   }
@@ -230,20 +228,20 @@ function onChange() {
 
 
 // Example
-// var polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
+// var area = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
 // var   source0 = [5,2,4];
 // var   source1 = [4,2,5];
 // var sourcesTest = [source0, source1];
 // var microfon = [5,6,4];
 
-// if(isInTwoDimSpace(polygon)) {
+// if(isInTwoDimSpace(area)) {
 
-//   var isses = getImageSoundSources(polygon, sourcesTest);
+//   var isses = getImageSoundSources(area, sourcesTest);
 //   console.log("iss: " + isses)
-//   var intersections = calculateIntersections(polygon, microfon, isses);
+//   var intersections = calculateIntersections(area, microfon, isses);
 //   for (var intersection in intersections) {
-//     var contains = containsPoint(intersection, polygon);
+//     var contains = containsPoint(intersection, area);
 //     console.log("is valid: " + contains)
 //   }
 // } else {
