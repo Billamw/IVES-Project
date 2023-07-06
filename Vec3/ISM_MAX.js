@@ -35,8 +35,8 @@ var math = {
 
 var listener = [];
 var sources = [];
-// one wall must contain 4 vector3 points
-var walls    = [];
+// one area must contain 4 vector3 points
+var areas    = [];
 
 
 function setListener(message) {
@@ -49,27 +49,27 @@ function setListener(message) {
 
 function setSources(message) {
   var spltMsg = message.split(" ");
-  for (var i = 1; i < spltMsg.length; i+=3) {
-    sources.push([parseFloat(spltMsg[i]), parseFloat(spltMsg[i+1]), parseFloat(spltMsg[i+2])])
-  }
+  var sourceIdx = spltMsg[0].split("/")[2] - 1;
+  sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
+
   onChange();
 }
 
-function setWalls(message) {
+function setAreas(message) {
   var spltMsg = message.split(" ");
 
   for (var i = 1; i < spltMsg.length; i+=3) {
     spltMsg[i] = parseFloat(spltMsg[i]);
   }
   var areaIdx = spltMsg[0].split("/")[2] - 1;
-  walls[areaIdx] = [ [spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]], ];
+  areas[areaIdx] = [ [spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]], ];
 
   onChange();
   
 }
 
-function getWalls() {
-  outlet(0, walls.toString())
+function getAreas() {
+  outlet(0, areas.toString())
 }
 function getListener() {
   outlet(0, listener.toString())
@@ -82,27 +82,27 @@ function getSources() {
 
 
 // check if the given polygon is in
-function isInTwoDimSpace(wall) {
-  // var vec1 = math.subtract(wall[0], wall[parseInt((wall.length-1) / 2)]);
-  // var vec2 = math.subtract(wall[0], wall[wall.length - parseInt((wall.length-1) / 2)]);
-  var vec1 = math.subtract(wall[0], wall[2]);
-  var vec2 = math.subtract(wall[0], wall[1]);
+function isInTwoDimSpace(area) {
+  // var vec1 = math.subtract(area[0], area[parseInt((area.length-1) / 2)]);
+  // var vec2 = math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)]);
+  var vec1 = math.subtract(area[0], area[2]);
+  var vec2 = math.subtract(area[0], area[1]);
   var normal = math.cross(vec1, vec2);
-  for (var i = 0; i < wall.length; i++) {
-    if (math.dot(normal, wall[i]) > 0.005) {
+  for (var i = 0; i < area.length; i++) {
+    if (math.dot(normal, area[i]) > 0.005) {
       return false;
     }
   }
   return true;
 }
 
-//lvec: location vector ist the first vector of each wall
-//svec: support vector wall[3]-wall[0]
-//dvec: direction vector wall[1]-wall[0]
-function getImageSoundSource(polygon, source) {
-    var lvec = polygon[0];
-    var svec = math.subtract(polygon[0], polygon[1]);
-    var dvec = math.subtract(polygon[0], polygon[2]);
+//lvec: location vector ist the first vector of each area
+//svec: support vector area[3]-area[0]
+//dvec: direction vector area[1]-area[0]
+function getImageSoundSource(area, source) {
+    var lvec = area[0];
+    var svec = math.subtract(area[0], area[1]);
+    var dvec = math.subtract(area[0], area[2]);
     var normal = math.cross(dvec, svec);
     normal = math.divide(math.norm(normal), normal);
     var levTosource = math.subtract(lvec, source);
@@ -111,16 +111,15 @@ function getImageSoundSource(polygon, source) {
     return math.add(source, math.multiply(2*lambda, normal));
 }
 
-function getImageSoundSources(polygon, sources) {
-    var lvec = polygon[0];
-    var svec = math.subtract(polygon[0], polygon[1]);
-    var dvec = math.subtract(polygon[0], polygon[2]);
+function getImageSoundSources(area, sources) {
+    var lvec = area[0];
+    var svec = math.subtract(area[0], area[1]);
+    var dvec = math.subtract(area[0], area[2]);
     var normal = math.cross(dvec, svec);
     normal = math.divide(math.norm(normal), normal);
     var ISSes = [];
     for (var i = 0; i < sources.length; i++) {
       const source = sources[i];
-      // var levTosource = math.subtract(lvec, source);
       var levTosource = math.subtract(source, lvec);
       post(lvec + "\n" + source + "\n" + levTosource + "\n")
       // calculating intersectionpoint of plane and source
@@ -198,27 +197,27 @@ function onChange() {
     post();
     return;
   }
-  for (var i = 0; i < walls.length; i++) {
-    // checking if the wall is not set in Max
-    if(typeof walls[i] == "undefined") {
+  for (var i = 0; i < areas.length; i++) {
+    // checking if the area is not set in Max
+    if(typeof areas[i] == "undefined") {
       continue;
     }
-    const wall = walls[i];
-    post("wall " + wall)
+    const area = areas[i];
+    post("area " + area)
     post();
     // when the given coordinates are not forming a even plane
-    if(!isInTwoDimSpace(wall)){
-      post("Wall " + (i+1) + "incorrect!");
+    if(!isInTwoDimSpace(area)){
+      post("area " + (i+1) + "incorrect!");
       post();
       continue;
     }
-    var ISSes = getImageSoundSources(wall, sources);
-    var intersections = calculateIntersections(wall, listener, ISSes);
+    var ISSes = getImageSoundSources(area, sources);
+    var intersections = calculateIntersections(area, listener, ISSes);
     for (var i = 0; i < intersections.length; i++) {
       post("OnChance() for loop intersection " + i);
       post();
       const intersection = intersections[i];
-      if(containsPoint(intersection, wall)) {
+      if(containsPoint(intersection, area)) {
         outlet(0, "/source/" + (10) + "/color red");
         outlet(0, "/source/" + (10) + "/xyz " + ISSes[i][0] + " " + ISSes[i][1] + " " + ISSes[i][2]);
       }
