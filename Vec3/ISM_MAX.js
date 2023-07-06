@@ -33,48 +33,50 @@ var math = {
   }
 };
 
-var microphone = [];
-var speakers   = [];
-var walls      = [[0, 0, 0],[0, 0, 0],[0, 0, 0],[0, 0, 0],[0, 0, 0],[0, 0, 0],[0, 0, 0],[0, 0, 0]];
+var listener = [];
+var sources = [];
+// one wall must contain 4 vector3 points
+var walls    = [];
 
 
-function setMicrophone(message) {
+function setListener(message) {
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[2] == "xyz") {
-    microphone = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
+    listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
     onChange();
   }
 }
 
-function setSpeakers(message) {
+function setSources(message) {
   var spltMsg = message.split(" ");
   for (var i = 1; i < spltMsg.length; i+=3) {
-    speakers.push([parseFloat(spltMsg[i]), parseFloat(spltMsg[i+1]), parseFloat(spltMsg[i+2])])
+    sources.push([parseFloat(spltMsg[i]), parseFloat(spltMsg[i+1]), parseFloat(spltMsg[i+2])])
   }
   onChange();
 }
-// /area/8/xyz 8 6 3 1 0
+
 function setWalls(message) {
   var spltMsg = message.split(" ");
-  spltMsg.reverse();
-  var areaNum = spltMsg.pop().split("/")[2] - 1;
-  spltMsg.reverse();
 
-  for (var i = 0; i < spltMsg.length; i++) {
+  for (var i = 1; i < spltMsg.length; i+=3) {
     spltMsg[i] = parseFloat(spltMsg[i]);
-    
   }
-  // outlet(0, "bang")
-  walls[areaNum] = spltMsg;
+  var areaIdx = spltMsg[0].split("/")[2] - 1;
+  walls[areaIdx] = [ [spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]], ];
+
   onChange();
   
 }
 
-// testing set funktions
-// setSpeakers("dfdsjs 5 5 5 4 4 4 6 6 6")
-// setWalls("sd/sdsd/6 5 4 3 2 1");
-// console.log(speakers)
-// console.log(walls)
+function getWalls() {
+  outlet(0, walls.toString())
+}
+function getListener() {
+  outlet(0, listener.toString())
+}
+function getSources() {
+  outlet(0, sources.toString())
+}
 
 
 
@@ -97,37 +99,40 @@ function isInTwoDimSpace(wall) {
 //lvec: location vector ist the first vector of each wall
 //svec: support vector wall[3]-wall[0]
 //dvec: direction vector wall[1]-wall[0]
-function getImageSoundSource(polygon, speaker) {
+function getImageSoundSource(polygon, source) {
     var lvec = polygon[0];
     var svec = math.subtract(polygon[0], polygon[1]);
     var dvec = math.subtract(polygon[0], polygon[2]);
     var normal = math.cross(dvec, svec);
     normal = math.divide(math.norm(normal), normal);
-    var levToSpeaker = math.subtract(lvec, speaker);
-    // calculating intersectionpoint of plane and speaker
-    var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
-    return math.add(speaker, math.multiply(2*lambda, normal));
+    var levTosource = math.subtract(lvec, source);
+    // calculating intersectionpoint of plane and source
+    var lambda = math.dot(normal, levTosource) / (normal[0] + normal[1] + normal[2]);
+    return math.add(source, math.multiply(2*lambda, normal));
 }
 
-function getImageSoundSources(polygon, speakers) {
+function getImageSoundSources(polygon, sources) {
     var lvec = polygon[0];
     var svec = math.subtract(polygon[0], polygon[1]);
     var dvec = math.subtract(polygon[0], polygon[2]);
     var normal = math.cross(dvec, svec);
     normal = math.divide(math.norm(normal), normal);
-    var ISSes = []
-    for (var speaker in speakers) {
-      var levToSpeaker = math.subtract(lvec, speaker);
-      // calculating intersectionpoint of plane and speaker
-      var lambda = math.dot(normal, levToSpeaker) / (normal[0] + normal[1] + normal[2]);
-      ISSes.push(math.add(speaker, math.multiply(2*lambda, normal)));
+    var ISSes = [];
+    for (var i = 0; i < sources.length; i++) {
+      const source = sources[i];
+      // var levTosource = math.subtract(lvec, source);
+      var levTosource = math.subtract(source, lvec);
+      post(lvec + "\n" + source + "\n" + levTosource + "\n")
+      // calculating intersectionpoint of plane and source
+      var lambda = math.dot(normal, levTosource) / (normal[0] + normal[1] + normal[2]);
+      ISSes.push(math.add(source, math.multiply(2*lambda, normal)));
     }
     return ISSes;
 }
 
-function calculateIntersection(polygon, microphone, ISS) {
+function calculateIntersection(polygon, listener, ISS) {
 
-    var lineVector = math.subtract(microphone, ISS);
+    var lineVector = math.subtract(listener, ISS);
 
     var planeNormal = math.cross(
       math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
@@ -140,10 +145,10 @@ function calculateIntersection(polygon, microphone, ISS) {
     return intersectionPoint;
   }
 
-function calculateIntersections(polygon, microphone, ISSes) {
+function calculateIntersections(polygon, listener, ISSes) {
   var intersectionPoints = []
   for (var ISS in ISSes) {
-    var lineVector = math.subtract(microphone, ISS);
+    var lineVector = math.subtract(listener, ISS);
 
     var planeNormal = math.cross(
       math.subtract(polygon[0], polygon[parseInt((polygon.length-1) / 2)]),
@@ -188,19 +193,30 @@ function getDistance(ISS, microfon) {
 
 
 function onChange() {
+  if(typeof sources == "undefined" || typeof listener == "undefined") {
+    post("source or listener are not initialed");
+    post();
+    return;
+  }
   for (var i = 0; i < walls.length; i++) {
-    const wall = walls[i];
-    if(typeof wall == 'undefined') {
-      return;
+    // checking if the wall is not set in Max
+    if(typeof walls[i] == "undefined") {
+      continue;
     }
+    const wall = walls[i];
+    post("wall " + wall)
+    post();
+    // when the given coordinates are not forming a even plane
     if(!isInTwoDimSpace(wall)){
       post("Wall " + (i+1) + "incorrect!");
       post();
-      return;
+      continue;
     }
-    var ISSes = getImageSoundSources(wall, speakers);
-    var intersections = calculateIntersections(wall, microphone, ISSes);
+    var ISSes = getImageSoundSources(wall, sources);
+    var intersections = calculateIntersections(wall, listener, ISSes);
     for (var i = 0; i < intersections.length; i++) {
+      post("OnChance() for loop intersection " + i);
+      post();
       const intersection = intersections[i];
       if(containsPoint(intersection, wall)) {
         outlet(0, "/source/" + (10) + "/color red");
@@ -217,14 +233,14 @@ function onChange() {
 // Example
 // var polygon = [[0,10,0], [10,10,0], [10,0,0], [0,0,0]];
 
-// var   speaker0 = [5,2,4];
-// var   speaker1 = [4,2,5];
-// var speakersTest = [speaker0, speaker1];
+// var   source0 = [5,2,4];
+// var   source1 = [4,2,5];
+// var sourcesTest = [source0, source1];
 // var microfon = [5,6,4];
 
 // if(isInTwoDimSpace(polygon)) {
 
-//   var isses = getImageSoundSources(polygon, speakersTest);
+//   var isses = getImageSoundSources(polygon, sourcesTest);
 //   console.log("iss: " + isses)
 //   var intersections = calculateIntersections(polygon, microfon, isses);
 //   for (var intersection in intersections) {
