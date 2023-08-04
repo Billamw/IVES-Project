@@ -105,21 +105,6 @@ function isInTwoDimSpace(area) {
   return true;
 }
 
-//lvec: location vector ist the first vector of each area
-//svec: support vector area[3]-area[0]
-//dvec: direction vector area[1]-area[0]
-function getImageSoundSource(area, source) {
-    var lvec = area[0];
-    var svec = math.subtract(area[0], area[1]);
-    var dvec = math.subtract(area[0], area[2]);
-    var normal = math.cross(dvec, svec);
-    normal = math.divide(math.norm(normal), normal);
-    var levTosource = math.subtract(source, lvec);
-    // calculating intersectionpoint of plane and source
-    var lambda = math.dot(normal, levTosource) / (normal[0] + normal[1] + normal[2]);
-    return math.add(source, math.multiply(2*lambda, normal));
-}
-
 function getImageSoundSources(area, sources) {
     var lvec = area[0];
     var svec = math.subtract(area[0], area[1]);
@@ -154,7 +139,7 @@ function calculateIntersection(area, listener, ISS) {
 
 function calculateIntersections(area, listener, ISSes) {
   var intersectionPoints = []
-  for (var i = 0; i < ISSes-length; i++) {
+  for (var i = 0; i < ISSes.length; i++) {
     var lineVector = math.subtract(listener, ISS);
 
     var planeNormal = math.cross(
