@@ -85,8 +85,6 @@ function getSources() {
 }
 
 
-
-
 // check if the given area is in
 function isInTwoDimSpace(area) {
   // var vec1 = math.subtract(area[0], area[parseInt((area.length-1) / 2)]);
@@ -177,7 +175,6 @@ function onChange() {
       continue;
     }
     const area = areas[i];
-    // post("area " + area + "\n")
     // // when the given coordinates are not forming a even plane
     // if(!isInTwoDimSpace(area)){
     //   post("area " + (i+1) + "incorrect!" + "\n");
@@ -188,9 +185,10 @@ function onChange() {
     for (var j = 0; j < intersections.length; j++) {
       const intersection = intersections[j];
       if(containsPoint(intersection, area)) {
-        outlet(0, "/source/" + (10) + "/color red");
+        var srcIdx = sources.length * areas.length + (i + 1) * (j + 1);
+        outlet(0, "/source/" + srcIdx + "/color red");
         // Converting from Spat5 to OpenGL coordinates
-        outlet(0, "/source/" + (10) + "/xyz " + ISSes[j][0] + " " + ISSes[j][2] + " " + -ISSes[j][1]);
+        outlet(0, "/source/" + srcIdx + "/xyz " + ISSes[j][0] + " " + ISSes[j][2] + " " + -ISSes[j][1]);
       }
     }
   }
