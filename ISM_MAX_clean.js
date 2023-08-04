@@ -40,40 +40,37 @@ var areas    = [];
 
 
 function setListener(message) {
+  // post("Listener Msg: " + message + "\n")
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[2] == "xyz") {
-    // Converting from Spat5 to OpenGL coordinates
-    listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[3]), -parseFloat(spltMsg[2])];
-    // Not converted version
-    // listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
-    onChange();
+    listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
+
+    // onChange();
   }
 }
 
 function setSources(message) {
+  // post("Sources Msg: " + message + "\n")
   var spltMsg = message.split(" ");
-  var sourceIdx = spltMsg[0].split("/")[2] - 1;
-  // Converting from Spat5 to OpenGL coordinates
-  sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[3]), -parseFloat(spltMsg[2])];
-  // Not converted version
-  // sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
+  if(spltMsg[0].split("/")[3] == "xyz" && spltMsg[0].split("/")[4] != null) {
+    var sourceIdx = spltMsg[0].split("/")[2] - 1;
+    sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
-  onChange();
+    // onChange();
+  }
 }
 
 function setAreas(message) {
+  // post("Areas Msg: " + message + "\n")
   var spltMsg = message.split(" ");
 
   for (var i = 1; i < spltMsg.length; i+=3) {
     spltMsg[i] = parseFloat(spltMsg[i]);
   }
   var areaIdx = spltMsg[0].split("/")[2] - 1;
-  // Converting from Spat5 to OpenGL coordinates
-  areas[areaIdx] = [[spltMsg[1], spltMsg[3], -spltMsg[2]], [spltMsg[4], spltMsg[6], -spltMsg[5]], [spltMsg[7], spltMsg[9], -spltMsg[8]], [spltMsg[10], spltMsg[12], -spltMsg[11]]];
-  // Not converted version
-  // areas[areaIdx] = [[spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]]];
+  areas[areaIdx] = [[spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]]];
 
-  onChange();
+  // onChange();
   
 }
 
@@ -122,33 +119,18 @@ function getImageSoundSources(area, sources) {
     return ISSes;
 }
 
-function calculateIntersection(area, listener, ISS) {
-
-    var lineVector = math.subtract(listener, ISS);
-
-    var planeNormal = math.cross(
-      math.subtract(area[0], area[parseInt((area.length-1) / 2)]),
-      math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)])
-    );
-  
-    var t = math.dot(planeNormal, math.subtract(area[0], ISS)) / math.dot(planeNormal, lineVector);
-    var intersectionPoint = math.add(ISS, math.multiply(t, lineVector));
-  
-    return intersectionPoint;
-  }
-
 function calculateIntersections(area, listener, ISSes) {
   var intersectionPoints = []
   for (var i = 0; i < ISSes.length; i++) {
-    var lineVector = math.subtract(listener, ISS);
+    var lineVector = math.subtract(listener, ISSes);
 
     var planeNormal = math.cross(
       math.subtract(area[0], area[parseInt((area.length-1) / 2)]),
       math.subtract(area[0], area[area.length - parseInt((area.length-1) / 2)])
     );
   
-    var t = math.dot(planeNormal, math.subtract(area[0], ISS)) / math.dot(planeNormal, lineVector);
-    intersectionPoints.push( math.add( ISS, math.multiply( t, lineVector ) ) );
+    var t = math.dot(planeNormal, math.subtract(area[0], ISSes)) / math.dot(planeNormal, lineVector);
+    intersectionPoints.push( math.add( ISSes, math.multiply( t, lineVector ) ) );
   }
     return intersectionPoints;
   }
@@ -195,19 +177,20 @@ function onChange() {
       continue;
     }
     const area = areas[i];
-    post("area " + area + "\n")
-    // when the given coordinates are not forming a even plane
-    if(!isInTwoDimSpace(area)){
-      post("area " + (i+1) + "incorrect!" + "\n");
-      continue;
-    }
+    // post("area " + area + "\n")
+    // // when the given coordinates are not forming a even plane
+    // if(!isInTwoDimSpace(area)){
+    //   post("area " + (i+1) + "incorrect!" + "\n");
+    //   continue;
+    // }
     var ISSes = getImageSoundSources(area, sources);
     var intersections = calculateIntersections(area, listener, ISSes);
     for (var j = 0; j < intersections.length; j++) {
       const intersection = intersections[j];
       if(containsPoint(intersection, area)) {
         outlet(0, "/source/" + (10) + "/color red");
-        outlet(0, "/source/" + (10) + "/xyz " + ISSes[j][0] + " " + ISSes[j][1] + " " + ISSes[j][2]);
+        // Converting from Spat5 to OpenGL coordinates
+        outlet(0, "/source/" + (10) + "/xyz " + ISSes[j][0] + " " + ISSes[j][2] + " " + -ISSes[j][1]);
       }
     }
   }
