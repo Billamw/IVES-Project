@@ -34,7 +34,7 @@ var math = {
 };
 
 var listener = [];
-var sources = [];
+var sources  = [];
 // one area must contain 4 vector3 points
 var areas    = [];
 
