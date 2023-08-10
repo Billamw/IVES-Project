@@ -40,26 +40,26 @@ var areas    = [];
 
 
 function setListener(message) {
-  post("Listener Msg: " + message + "\n")
+  // post("Listener Msg: " + message + "\n")
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[2] == "xyz") {
     listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
-    // onChange();
+    onChange();
   }
 }
 
 function setSources(message) {
-  post("Sources Msg: " + message + "\n")
+  // post("Sources Msg: " + message + "\n")
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[3] == "xyz" && spltMsg[1] != null) {
     var sourceIdx = spltMsg[0].split("/")[2] - 1;
     sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
-    // onChange();
+    onChange();
   }
 }
-
+var countAreaChanges = 0;
 function setAreas(message) {
   // post("Areas Msg: " + message + "\n")
   var spltMsg = message.split(" ");
@@ -68,10 +68,17 @@ function setAreas(message) {
     spltMsg[i] = parseFloat(spltMsg[i]);
   }
   var areaIdx = spltMsg[0].split("/")[2] - 1;
+  var oldArea = areas[areaIdx];
   areas[areaIdx] = [[spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]]];
 
-  // onChange();
+  if (JSON.stringify(oldArea) !== JSON.stringify(areas[areaIdx])) {
+    countAreaChanges++;
+  }
   
+  if(countAreaChanges == areas.length) {
+    countAreaChanges = 0;
+    onChange();
+  }
 }
 
 function getAreas() {
