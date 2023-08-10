@@ -40,7 +40,7 @@ var areas    = [];
 
 
 function setListener(message) {
-  // post("Listener Msg: " + message + "\n")
+  post("Listener Msg: " + message + "\n")
   var spltMsg = message.split(" ");
   if(spltMsg[0].split("/")[2] == "xyz") {
     listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
@@ -50,9 +50,9 @@ function setListener(message) {
 }
 
 function setSources(message) {
-  // post("Sources Msg: " + message + "\n")
+  post("Sources Msg: " + message + "\n")
   var spltMsg = message.split(" ");
-  if(spltMsg[0].split("/")[3] == "xyz" && spltMsg[0].split("/")[4] != null) {
+  if(spltMsg[0].split("/")[3] == "xyz" && spltMsg[1] != null) {
     var sourceIdx = spltMsg[0].split("/")[2] - 1;
     sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
