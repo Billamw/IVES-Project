@@ -46,7 +46,7 @@ function setListener(message) {
     listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[3]), -parseFloat(spltMsg[2])];
     // Not converted version
     // listener = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
-    onChange();
+    // onChange();
   }
 }
 
@@ -58,7 +58,7 @@ function setSources(message) {
   // Not converted version
   // sources[sourceIdx] = [parseFloat(spltMsg[1]), parseFloat(spltMsg[2]), parseFloat(spltMsg[3])];
 
-  onChange();
+  // onChange();
 }
 
 function setAreas(message) {
@@ -73,7 +73,7 @@ function setAreas(message) {
   // Not converted version
   // areas[areaIdx] = [[spltMsg[1], spltMsg[2], spltMsg[3]], [spltMsg[4], spltMsg[5], spltMsg[6]], [spltMsg[7], spltMsg[8], spltMsg[9]], [spltMsg[10], spltMsg[11], spltMsg[12]]];
 
-  onChange();
+  // onChange();
   
 }
 
